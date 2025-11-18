@@ -1,0 +1,3399 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:9080
+  description: Generated server url
+tags:
+- name: Books
+  description: Endpoints for managing books
+- name: Users
+  description: Endpoints for managing users
+- name: Dashboard
+  description: Endpoints for dashboard statistics.
+- name: Data Export
+  description: APIs for exporting data to CSV files
+- name: Auth
+  description: Endpoints for user authentication and authorization
+- name: Transactions
+  description: Endpoints for managing book transactions
+- name: Data Import
+  description: APIs for importing data from CSV files
+paths:
+  /api/users/{id}:
+    get:
+      tags:
+      - Users
+      summary: Get user by ID
+      description: Retrieves a user by their unique ID.
+      operationId: getUser
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: User found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseUserDTO"
+        "404":
+          description: User not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseUserDTO"
+    put:
+      tags:
+      - Users
+      summary: Update a user
+      description: Updates an existing user's information.
+      operationId: updateUser
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdateDTO"
+        required: true
+      responses:
+        "200":
+          description: User updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseUserDTO"
+        "404":
+          description: User not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseUserDTO"
+    delete:
+      tags:
+      - Users
+      summary: Delete a user
+      description: Soft-deletes a user from the system.
+      operationId: deleteUser
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: User soft-deleted successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseVoid"
+        "404":
+          description: User not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseVoid"
+  /api/books/{id}:
+    get:
+      tags:
+      - Books
+      summary: Get a book by ID
+      description: Retrieves a book by its unique ID.
+      operationId: getBook
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Book found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseBookDTO"
+        "404":
+          description: Book not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseBookDTO"
+    put:
+      tags:
+      - Books
+      summary: Update a book
+      description: Updates an existing book's information.
+      operationId: updateBook
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookUpdateDTO"
+        required: true
+      responses:
+        "200":
+          description: Book updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseBookDTO"
+        "404":
+          description: Book not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseBookDTO"
+    delete:
+      tags:
+      - Books
+      summary: Delete a book
+      description: Soft-deletes a book from the system.
+      operationId: deleteBook
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Book soft-deleted successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseVoid"
+        "404":
+          description: Book not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseVoid"
+  /api/users:
+    get:
+      tags:
+      - Users
+      summary: Get all users
+      description: Retrieves a paginated list of all users.
+      operationId: getAllUsers
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: fullName
+      - name: sortDir
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ASC
+          enum:
+          - ASC
+          - DESC
+      responses:
+        "200":
+          description: Users retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseListUserDTO"
+    post:
+      tags:
+      - Users
+      summary: Register a new user
+      description: Registers a new user in the system.
+      operationId: registerUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreateDTO"
+        required: true
+      responses:
+        "201":
+          description: User registered successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseUserDTO"
+        "400":
+          description: Invalid user data
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseUserDTO"
+  /api/users/{id}/reset-password:
+    post:
+      tags:
+      - Users
+      summary: Reset a user's password
+      description: Allows an admin to reset a user's password.
+      operationId: resetPassword
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PasswordResetDTO"
+        required: true
+      responses:
+        "200":
+          description: Password reset successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseVoid"
+        "404":
+          description: User not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseVoid"
+  /api/users/change-password:
+    post:
+      tags:
+      - Users
+      summary: Change current user's password
+      description: Allows the authenticated user to change their own password.
+      operationId: changePassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PasswordUpdateDTO"
+        required: true
+      responses:
+        "400":
+          description: Invalid password data
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseVoid"
+        "200":
+          description: Password changed successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseVoid"
+  /api/transactions/return:
+    post:
+      tags:
+      - Transactions
+      summary: Return a book
+      description: Marks a book as returned and updates the transaction.
+      operationId: returnBook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookReturnDTO"
+        required: true
+      responses:
+        "200":
+          description: Book returned successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseBookTransactionDTO"
+        "400":
+          description: Invalid return data
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseBookTransactionDTO"
+  /api/transactions/renew:
+    post:
+      tags:
+      - Transactions
+      summary: Renew a book
+      description: "Renews an existing book transaction, extending the due date."
+      operationId: renewBook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookRenewDTO"
+        required: true
+      responses:
+        "200":
+          description: Book renewed successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseBookTransactionDTO"
+        "400":
+          description: Invalid renewal data
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseBookTransactionDTO"
+  /api/transactions/issue:
+    post:
+      tags:
+      - Transactions
+      summary: Issue a book
+      description: Issues a book to a user and creates a new transaction.
+      operationId: issueBook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookIssueDTO"
+        required: true
+      responses:
+        "400":
+          description: Invalid transaction data
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseBookTransactionDTO"
+        "201":
+          description: Book issued successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseBookTransactionDTO"
+  /api/import/users:
+    post:
+      tags:
+      - Data Import
+      summary: Import users from a CSV file
+      operationId: importUsers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - file
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Users imported successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataImportResultDTO"
+        "500":
+          description: Error importing users
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DataImportResultDTO"
+  /api/import/transactions:
+    post:
+      tags:
+      - Data Import
+      summary: Import transactions from a CSV file
+      operationId: importTransactions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - file
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Transactions imported successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataImportResultDTO"
+        "500":
+          description: Error importing transactions
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DataImportResultDTO"
+  /api/import/books:
+    post:
+      tags:
+      - Data Import
+      summary: Import books from a CSV file
+      operationId: importBooks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - file
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Books imported successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataImportResultDTO"
+        "500":
+          description: Error importing books
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DataImportResultDTO"
+  /api/books:
+    get:
+      tags:
+      - Books
+      summary: Get all books
+      description: Retrieves a paginated list of all books.
+      operationId: getAllBooks
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: title
+      - name: sortDir
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ASC
+          enum:
+          - ASC
+          - DESC
+      responses:
+        "200":
+          description: Books retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseListBookDTO"
+    post:
+      tags:
+      - Books
+      summary: Register a new book
+      description: Registers a new book in the library system.
+      operationId: registerBook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookCreateDTO"
+        required: true
+      responses:
+        "400":
+          description: Invalid book data
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseBookDTO"
+        "201":
+          description: Book registered successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseBookDTO"
+  /api/books/bulk:
+    post:
+      tags:
+      - Books
+      summary: Register bulk books
+      description: Registers multiple books by uploading a JSON file containing an
+        array of book data.
+      operationId: registerBulkBooks
+      requestBody:
+        description: A JSON file containing an array of BookCreateDTO objects.
+        content:
+          multipart/form-data:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        "201":
+          description: Bulk book registration complete
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseMapStringObject"
+        "400":
+          description: Invalid file or file format
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseMapStringObject"
+  /api/auth/refresh:
+    post:
+      tags:
+      - Auth
+      summary: Refresh access token
+      description: Refreshes an expired access token using a valid refresh token.
+      operationId: refreshToken
+      parameters:
+      - name: refreshToken
+        in: cookie
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Token refreshed successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseAuthenticationResponse"
+        "401":
+          description: Invalid refresh token
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseAuthenticationResponse"
+  /api/auth/logout:
+    post:
+      tags:
+      - Auth
+      summary: User logout
+      description: Logs out the current user by invalidating their tokens.
+      operationId: logout
+      parameters:
+      - name: accessToken
+        in: cookie
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Logout successful
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseVoid"
+  /api/auth/login:
+    post:
+      tags:
+      - Auth
+      summary: User login
+      description: Authenticates a user and returns access and refresh tokens.
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+        required: true
+      responses:
+        "200":
+          description: Login successful
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseAuthenticationResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseAuthenticationResponse"
+  /api/users/{id}/status:
+    patch:
+      tags:
+      - Users
+      summary: Update user status
+      description: "Updates the status of a user (e.g., ACTIVE, INACTIVE, SUSPENDED)."
+      operationId: updateUserStatus
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: status
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - SUSPENDED
+          - EXPIRED
+      responses:
+        "404":
+          description: User not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseUserDTO"
+        "200":
+          description: User status updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseUserDTO"
+  /api/users/search:
+    get:
+      tags:
+      - Users
+      summary: Search for users
+      description: Searches for users based on a query string.
+      operationId: searchUsers
+      parameters:
+      - name: query
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: fullName
+      - name: sortDir
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ASC
+          enum:
+          - ASC
+          - DESC
+      responses:
+        "200":
+          description: Users found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseListUserDTO"
+  /api/transactions:
+    get:
+      tags:
+      - Transactions
+      summary: Get all transactions
+      description: Retrieves a paginated list of all book transactions.
+      operationId: getAllTransactions
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: issueDate
+      - name: sortDir
+        in: query
+        required: false
+        schema:
+          type: string
+          default: DESC
+          enum:
+          - ASC
+          - DESC
+      responses:
+        "200":
+          description: Transactions retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseListBookTransactionDTO"
+  /api/transactions/{id}:
+    get:
+      tags:
+      - Transactions
+      summary: Get transaction by ID
+      description: Retrieves a single book transaction by its unique ID.
+      operationId: getTransactionById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "404":
+          description: Transaction not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseBookTransactionDTO"
+        "200":
+          description: Transaction found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseBookTransactionDTO"
+  /api/transactions/user/{userId}:
+    get:
+      tags:
+      - Transactions
+      summary: Get transactions by user ID
+      description: Retrieves a paginated list of transactions for a specific user.
+      operationId: getTransactionsByUserId
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        "200":
+          description: Transactions retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseListBookTransactionDTO"
+  /api/transactions/user/{userId}/history:
+    get:
+      tags:
+      - Transactions
+      summary: Get user transaction history
+      description: Retrieves the complete transaction history for a specific user.
+      operationId: getUserTransactionHistory
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Transaction history retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseListBookTransactionDTO"
+  /api/transactions/user/{userId}/active:
+    get:
+      tags:
+      - Transactions
+      summary: Get active transactions by user ID
+      description: Retrieves a paginated list of active transactions for a specific
+        user.
+      operationId: getActiveTransactionsByUserId
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        "200":
+          description: Active transactions retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseListBookTransactionDTO"
+  /api/transactions/user/{userId}/active-borrows:
+    get:
+      tags:
+      - Transactions
+      summary: Get active borrows count for user
+      description: Retrieves the count of active book borrows for a specific user.
+      operationId: getActiveBorrowsCount
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Active borrows count retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseLong"
+  /api/transactions/search:
+    get:
+      tags:
+      - Transactions
+      summary: Search transactions
+      description: Searches for book transactions based on a query string.
+      operationId: search
+      parameters:
+      - name: query
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: issueDate
+      - name: sortDir
+        in: query
+        required: false
+        schema:
+          type: string
+          default: DESC
+          enum:
+          - ASC
+          - DESC
+      responses:
+        "200":
+          description: Transactions found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseListBookTransactionDTO"
+  /api/transactions/overdue:
+    get:
+      tags:
+      - Transactions
+      summary: Get overdue transactions
+      description: Retrieves a paginated list of all overdue book transactions.
+      operationId: getOverdueTransactions
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        "200":
+          description: Overdue transactions retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseListBookTransactionDTO"
+  /api/transactions/book/{bookId}:
+    get:
+      tags:
+      - Transactions
+      summary: Get transactions by book ID
+      description: Retrieves a paginated list of transactions for a specific book.
+      operationId: getTransactionsByBookId
+      parameters:
+      - name: bookId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        "200":
+          description: Transactions retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseListBookTransactionDTO"
+  /api/transactions/book/{bookId}/user/{userId}/is-issued:
+    get:
+      tags:
+      - Transactions
+      summary: Check if book is issued to user
+      description: Checks if a specific book is currently issued to a specific user.
+      operationId: isBookIssuedToUser
+      parameters:
+      - name: bookId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Check successful
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseBoolean"
+  /api/transactions/active:
+    get:
+      tags:
+      - Transactions
+      summary: Get active transactions
+      description: Retrieves a paginated list of all active book transactions.
+      operationId: getActiveTransactions
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: issueDate
+      - name: sortDir
+        in: query
+        required: false
+        schema:
+          type: string
+          default: DESC
+          enum:
+          - ASC
+          - DESC
+      responses:
+        "200":
+          description: Active transactions retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseListBookTransactionDTO"
+  /api/export/users:
+    get:
+      tags:
+      - Data Export
+      summary: Export all users to a CSV file
+      operationId: exportUsers
+      responses:
+        "200":
+          description: CSV file of users
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        "500":
+          description: Error generating the file
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+  /api/export/transactions:
+    get:
+      tags:
+      - Data Export
+      summary: Export all transactions to a CSV file
+      operationId: exportTransactions
+      responses:
+        "200":
+          description: CSV file of transactions
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        "500":
+          description: Error generating the file
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+  /api/export/books:
+    get:
+      tags:
+      - Data Export
+      summary: Export all books to a CSV file
+      operationId: exportBooks
+      responses:
+        "200":
+          description: CSV file of books
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        "500":
+          description: Error generating the file
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+  /api/dashboard/refresh:
+    get:
+      tags:
+      - Dashboard
+      summary: Refresh Dashboard Statistics
+      description: Manually triggers an update of the dashboard statistics. Accessible
+        only by Admin and Super Admin users.
+      operationId: refreshDashboardStats
+      responses:
+        "200":
+          description: Dashboard statistics refreshed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomApiResponse"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseVoid"
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseVoid"
+      security:
+      - bearerAuth: []
+  /api/dashboard/member:
+    get:
+      tags:
+      - Dashboard
+      summary: Get Member Dashboard Statistics
+      description: "Returns dashboard statistics for a Member user, including personal\
+        \ borrowing history and status."
+      operationId: getMemberDashboard
+      responses:
+        "200":
+          description: Member dashboard data retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemberDashboardDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseMemberDashboardDTO"
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseMemberDashboardDTO"
+      security:
+      - bearerAuth: []
+  /api/dashboard/admin:
+    get:
+      tags:
+      - Dashboard
+      summary: Get Admin Dashboard Statistics
+      description: "Returns dashboard statistics for Admin and Super Admin users,\
+        \ including system-wide metrics."
+      operationId: getAdminDashboard
+      responses:
+        "200":
+          description: Admin dashboard data retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminDashboardDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseAdminDashboardDTO"
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseAdminDashboardDTO"
+      security:
+      - bearerAuth: []
+  /api/books/search:
+    get:
+      tags:
+      - Books
+      summary: Search for books
+      description: Searches for books based on a query string.
+      operationId: searchBooks
+      parameters:
+      - name: query
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: title
+      - name: sortDir
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ASC
+          enum:
+          - ASC
+          - DESC
+      responses:
+        "200":
+          description: Books found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseListBookDTO"
+  /api/auth/status:
+    get:
+      tags:
+      - Auth
+      summary: Check authentication status
+      description: Checks if the current user is authenticated.
+      operationId: checkAuthStatus
+      responses:
+        "401":
+          description: User is not authenticated
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseString"
+        "200":
+          description: User is authenticated
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseString"
+  /api/auth/me:
+    get:
+      tags:
+      - Auth
+      summary: Get current user profile
+      description: Retrieves the profile of the currently authenticated user.
+      operationId: getAuthenticatedUser
+      responses:
+        "401":
+          description: User is not authenticated
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseUserDTO"
+        "200":
+          description: User profile retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CustomApiResponseUserDTO"
+components:
+  schemas:
+    UserUpdateDTO:
+      type: object
+      properties:
+        fullName:
+          maxLength: 200
+          minLength: 0
+          type: string
+        email:
+          maxLength: 200
+          minLength: 0
+          type: string
+        phoneMobile:
+          maxLength: 15
+          minLength: 0
+          type: string
+        phoneOffice:
+          maxLength: 15
+          minLength: 0
+          type: string
+        division:
+          maxLength: 100
+          minLength: 0
+          type: string
+        department:
+          maxLength: 100
+          minLength: 0
+          type: string
+        designation:
+          maxLength: 100
+          minLength: 0
+          type: string
+        floorNumber:
+          maxLength: 10
+          minLength: 0
+          type: string
+        officeRoom:
+          maxLength: 20
+          minLength: 0
+          type: string
+        address:
+          type: string
+        userRole:
+          type: string
+          enum:
+          - MEMBER
+          - ADMIN
+          - SUPER_ADMIN
+        userStatus:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - SUSPENDED
+          - EXPIRED
+        booksIssued:
+          type: integer
+          format: int32
+        expirationDate:
+          type: string
+          format: date
+        photoPath:
+          maxLength: 500
+          minLength: 0
+          type: string
+        emergencyContact:
+          maxLength: 200
+          minLength: 0
+          type: string
+        emergencyPhone:
+          maxLength: 15
+          minLength: 0
+          type: string
+        remarks:
+          type: string
+    CustomApiResponseUserDTO:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/UserDTO"
+        timestamp:
+          type: string
+          format: date
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
+    PaginationMetadata:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int32
+        totalPages:
+          type: integer
+          format: int32
+        currentPage:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    UserDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        employeeId:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+        phoneMobile:
+          type: string
+        phoneOffice:
+          type: string
+        division:
+          type: string
+        department:
+          type: string
+        designation:
+          type: string
+        floorNumber:
+          type: string
+        officeRoom:
+          type: string
+        address:
+          type: string
+        userRole:
+          type: string
+          enum:
+          - MEMBER
+          - ADMIN
+          - SUPER_ADMIN
+        userStatus:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - SUSPENDED
+          - EXPIRED
+        booksIssued:
+          type: integer
+          format: int32
+        registrationDate:
+          type: string
+          format: date-time
+        expirationDate:
+          type: string
+          format: date
+        photoPath:
+          type: string
+        emergencyContact:
+          type: string
+        emergencyPhone:
+          type: string
+        remarks:
+          type: string
+        currentBorrowedBooksCount:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    BookUpdateDTO:
+      type: object
+      properties:
+        isbn:
+          type: string
+        title:
+          maxLength: 512
+          minLength: 0
+          type: string
+        subtitle:
+          type: string
+        authorPrimary:
+          type: string
+        authorSecondary:
+          type: string
+        publisher:
+          type: string
+        publicationPlace:
+          type: string
+        publicationYear:
+          type: integer
+          format: int32
+        edition:
+          type: string
+        pages:
+          type: string
+        language:
+          type: string
+        price:
+          type: number
+        billNumber:
+          type: string
+        vendorName:
+          type: string
+        purchaseDate:
+          type: string
+          format: date
+        keywords:
+          type: string
+        classificationNumber:
+          type: string
+        locationShelf:
+          type: string
+        locationRack:
+          type: string
+        bookCondition:
+          type: string
+          enum:
+          - EXCELLENT
+          - GOOD
+          - FAIR
+          - POOR
+          - DAMAGED
+        bookStatus:
+          type: string
+          enum:
+          - AVAILABLE
+          - ISSUED
+          - LOST
+          - DAMAGED
+          - UNDER_REPAIR
+          - UNAVAILABLE
+        totalCopies:
+          type: integer
+          format: int32
+        availableCopies:
+          type: integer
+          format: int32
+        bookType:
+          type: string
+          enum:
+          - REFERENCE
+          - GENERAL
+          - JOURNAL
+          - MAGAZINE
+          - THESIS
+          - REPORT
+          - TEST
+          - GIFTED
+          - OTHER
+        isReferenceOnly:
+          type: boolean
+        notes:
+          type: string
+    BookDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        accessionNumber:
+          type: string
+        isbn:
+          type: string
+        title:
+          type: string
+        subtitle:
+          type: string
+        authorPrimary:
+          type: string
+        authorSecondary:
+          type: string
+        publisher:
+          type: string
+        publicationPlace:
+          type: string
+        publicationYear:
+          type: integer
+          format: int32
+        edition:
+          type: string
+        pages:
+          type: string
+        language:
+          type: string
+        price:
+          type: number
+        billNumber:
+          type: string
+        vendorName:
+          type: string
+        purchaseDate:
+          type: string
+          format: date
+        keywords:
+          type: string
+        classificationNumber:
+          type: string
+        locationShelf:
+          type: string
+        locationRack:
+          type: string
+        bookCondition:
+          type: string
+          enum:
+          - EXCELLENT
+          - GOOD
+          - FAIR
+          - POOR
+          - DAMAGED
+        bookStatus:
+          type: string
+          enum:
+          - AVAILABLE
+          - ISSUED
+          - LOST
+          - DAMAGED
+          - UNDER_REPAIR
+          - UNAVAILABLE
+        totalCopies:
+          type: integer
+          format: int32
+        availableCopies:
+          type: integer
+          format: int32
+        bookType:
+          type: string
+          enum:
+          - REFERENCE
+          - GENERAL
+          - JOURNAL
+          - MAGAZINE
+          - THESIS
+          - REPORT
+          - TEST
+          - GIFTED
+          - OTHER
+        isReferenceOnly:
+          type: boolean
+        registrationDate:
+          type: string
+          format: date-time
+        notes:
+          type: string
+    CustomApiResponseBookDTO:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/BookDTO"
+        timestamp:
+          type: string
+          format: date
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
+    UserCreateDTO:
+      required:
+      - employeeId
+      - fullName
+      - password
+      - userRole
+      type: object
+      properties:
+        employeeId:
+          maxLength: 50
+          minLength: 0
+          type: string
+        fullName:
+          maxLength: 200
+          minLength: 0
+          type: string
+        email:
+          maxLength: 200
+          minLength: 0
+          type: string
+        phoneMobile:
+          maxLength: 15
+          minLength: 0
+          type: string
+        phoneOffice:
+          maxLength: 15
+          minLength: 0
+          type: string
+        division:
+          maxLength: 100
+          minLength: 0
+          type: string
+        department:
+          maxLength: 100
+          minLength: 0
+          type: string
+        designation:
+          maxLength: 100
+          minLength: 0
+          type: string
+        floorNumber:
+          maxLength: 10
+          minLength: 0
+          type: string
+        officeRoom:
+          maxLength: 20
+          minLength: 0
+          type: string
+        address:
+          type: string
+        userRole:
+          type: string
+          enum:
+          - MEMBER
+          - ADMIN
+          - SUPER_ADMIN
+        userStatus:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - SUSPENDED
+          - EXPIRED
+        booksIssued:
+          type: integer
+          format: int32
+        expirationDate:
+          type: string
+          format: date
+        photoPath:
+          maxLength: 500
+          minLength: 0
+          type: string
+        emergencyContact:
+          maxLength: 200
+          minLength: 0
+          type: string
+        emergencyPhone:
+          maxLength: 15
+          minLength: 0
+          type: string
+        remarks:
+          type: string
+        password:
+          maxLength: 2147483647
+          minLength: 8
+          type: string
+    PasswordResetDTO:
+      required:
+      - newPassword
+      type: object
+      properties:
+        newPassword:
+          maxLength: 2147483647
+          minLength: 8
+          type: string
+    CustomApiResponseVoid:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+        data:
+          type: object
+        timestamp:
+          type: string
+          format: date
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
+    PasswordUpdateDTO:
+      required:
+      - confirmPassword
+      - currentPassword
+      - newPassword
+      type: object
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          maxLength: 2147483647
+          minLength: 8
+          type: string
+        confirmPassword:
+          type: string
+    BookReturnDTO:
+      required:
+      - transactionId
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+        transactionNotes:
+          type: string
+    BookTransactionDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        bookId:
+          type: string
+          format: uuid
+        bookTitle:
+          type: string
+        accessionNumber:
+          type: string
+        userId:
+          type: string
+          format: uuid
+        employeeId:
+          type: string
+        userFullName:
+          type: string
+        transactionType:
+          type: string
+          enum:
+          - ISSUE
+          - RETURN
+          - RENEW
+          - LOST_REPORT
+          - DAMAGE_REPORT
+        issueDate:
+          type: string
+          format: date-time
+        dueDate:
+          type: string
+          format: date
+        returnDate:
+          type: string
+          format: date-time
+        renewalCount:
+          type: integer
+          format: int32
+        issuedByUserId:
+          type: string
+          format: uuid
+        issuedByUserFullName:
+          type: string
+        returnedToUserId:
+          type: string
+          format: uuid
+        returnedToUserFullName:
+          type: string
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - COMPLETED
+          - OVERDUE
+          - LOST
+          - DAMAGED
+        transactionNotes:
+          type: string
+    CustomApiResponseBookTransactionDTO:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/BookTransactionDTO"
+        timestamp:
+          type: string
+          format: date
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
+    BookRenewDTO:
+      required:
+      - newDueDate
+      - transactionId
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+        newDueDate:
+          type: string
+          format: date
+        transactionNotes:
+          type: string
+    BookIssueDTO:
+      required:
+      - bookId
+      - dueDate
+      - issueDate
+      - userId
+      type: object
+      properties:
+        bookId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        dueDate:
+          type: string
+          format: date
+        issueDate:
+          type: string
+          format: date
+        transactionNotes:
+          type: string
+    DataImportResultDTO:
+      type: object
+      properties:
+        successfulImports:
+          type: integer
+          format: int32
+        failedImports:
+          type: integer
+          format: int32
+        failedRecordIdentifiers:
+          type: array
+          items:
+            type: string
+        message:
+          type: string
+    BookCreateDTO:
+      required:
+      - accessionNumber
+      type: object
+      properties:
+        accessionNumber:
+          maxLength: 100
+          minLength: 0
+          type: string
+        isbn:
+          maxLength: 30
+          minLength: 0
+          type: string
+        title:
+          maxLength: 512
+          minLength: 0
+          type: string
+        subtitle:
+          type: string
+        authorPrimary:
+          maxLength: 300
+          minLength: 0
+          type: string
+        authorSecondary:
+          type: string
+        publisher:
+          maxLength: 300
+          minLength: 0
+          type: string
+        publicationPlace:
+          maxLength: 200
+          minLength: 0
+          type: string
+        publicationYear:
+          maximum: 9999
+          minimum: 1000
+          type: integer
+          format: int32
+        edition:
+          maxLength: 150
+          minLength: 0
+          type: string
+        pages:
+          type: string
+        language:
+          maxLength: 50
+          minLength: 0
+          type: string
+        price:
+          minimum: 0.00
+          exclusiveMinimum: false
+          type: number
+        billNumber:
+          maxLength: 200
+          minLength: 0
+          type: string
+        vendorName:
+          maxLength: 500
+          minLength: 0
+          type: string
+        purchaseDate:
+          type: string
+        keywords:
+          type: string
+        classificationNumber:
+          maxLength: 150
+          minLength: 0
+          type: string
+        locationShelf:
+          maxLength: 100
+          minLength: 0
+          type: string
+        locationRack:
+          maxLength: 100
+          minLength: 0
+          type: string
+        bookCondition:
+          type: string
+          enum:
+          - EXCELLENT
+          - GOOD
+          - FAIR
+          - POOR
+          - DAMAGED
+        bookStatus:
+          type: string
+          enum:
+          - AVAILABLE
+          - ISSUED
+          - LOST
+          - DAMAGED
+          - UNDER_REPAIR
+          - UNAVAILABLE
+        totalCopies:
+          minimum: 1
+          type: integer
+          format: int32
+        availableCopies:
+          minimum: 0
+          type: integer
+          format: int32
+        bookType:
+          type: string
+          enum:
+          - REFERENCE
+          - GENERAL
+          - JOURNAL
+          - MAGAZINE
+          - THESIS
+          - REPORT
+          - TEST
+          - GIFTED
+          - OTHER
+        isReferenceOnly:
+          type: boolean
+        notes:
+          type: string
+    CustomApiResponseMapStringObject:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+        data:
+          type: object
+          additionalProperties:
+            type: object
+        timestamp:
+          type: string
+          format: date
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
+    AuthenticationResponse:
+      type: object
+      properties:
+        userRole:
+          type: string
+        username:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+    CustomApiResponseAuthenticationResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/AuthenticationResponse"
+        timestamp:
+          type: string
+          format: date
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    CustomApiResponseListUserDTO:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserDTO"
+        timestamp:
+          type: string
+          format: date
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
+    CustomApiResponseListBookTransactionDTO:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/BookTransactionDTO"
+        timestamp:
+          type: string
+          format: date
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
+    CustomApiResponseLong:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+        data:
+          type: integer
+          format: int64
+        timestamp:
+          type: string
+          format: date
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
+    CustomApiResponseBoolean:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+        data:
+          type: boolean
+        timestamp:
+          type: string
+          format: date
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
+    CustomApiResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+        data:
+          type: object
+        timestamp:
+          type: string
+          format: date
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
+    MemberDashboardDTO:
+      type: object
+      properties:
+        borrowedBooksCount:
+          type: integer
+          format: int64
+        overdueBooksCount:
+          type: integer
+          format: int64
+        overdueBooks:
+          type: array
+          items:
+            $ref: "#/components/schemas/BookTransactionDTO"
+    CustomApiResponseMemberDashboardDTO:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/MemberDashboardDTO"
+        timestamp:
+          type: string
+          format: date
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
+    AdminDashboardDTO:
+      type: object
+      properties:
+        totalBookCopies:
+          type: integer
+          format: int64
+        totalUniqueBooks:
+          type: integer
+          format: int64
+        availableBooks:
+          type: integer
+          format: int64
+        issuedBooks:
+          type: integer
+          format: int64
+        overdueBooks:
+          type: integer
+          format: int64
+        lostBooks:
+          type: integer
+          format: int64
+        damagedBooks:
+          type: integer
+          format: int64
+        booksAddedLast7Days:
+          type: integer
+          format: int64
+        totalUsers:
+          type: integer
+          format: int64
+        activeUsers:
+          type: integer
+          format: int64
+        inactiveUsers:
+          type: integer
+          format: int64
+        bannedUsers:
+          type: integer
+          format: int64
+        newUsersLast30Days:
+          type: integer
+          format: int64
+        transactionsLast7Days:
+          type: integer
+          format: int64
+        transactionsLast30Days:
+          type: integer
+          format: int64
+        bookIssuesLast7Days:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: object
+        bookReturnsLast7Days:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: object
+        overdueBooksBreakdown:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: object
+    CustomApiResponseAdminDashboardDTO:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/AdminDashboardDTO"
+        timestamp:
+          type: string
+          format: date
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
+    CustomApiResponseListBookDTO:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/BookDTO"
+        timestamp:
+          type: string
+          format: date
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
+    CustomApiResponseString:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+        data:
+          type: string
+        timestamp:
+          type: string
+          format: date
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
