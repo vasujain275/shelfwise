@@ -1,0 +1,43 @@
+meta {
+  name: Book 2
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base}}/books
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "accessionNumber": "ACC002",
+    "isbn": "978-1234567890",
+    "title": "Introduction to Quantum Physics",
+    "subtitle": "Concepts and Applications",
+    "authorPrimary": "Dr. Sheldon Cooper",
+    "publisher": "Science Publishers",
+    "publicationPlace": "London",
+    "publicationYear": 2018,
+    "edition": "Third Edition",
+    "pages": 720,
+    "language": "English",
+    "price": 75.00,
+    "billNumber": "BILL-2023-002",
+    "vendorName": "Academic Books Ltd.",
+    "purchaseDate": "2023-02-20",
+    "keywords": "physics, quantum, science",
+    "classificationNumber": "SCI-PHY-002",
+    "locationShelf": "B2",
+    "locationRack": "R2",
+    "bookCondition": "GOOD",
+    "bookStatus": "AVAILABLE",
+    "totalCopies": 3,
+    "availableCopies": 3,
+    "bookType": "REFERENCE",
+    "isReferenceOnly": true,
+    "notes": "Essential for advanced physics students."
+  }
+  
+}

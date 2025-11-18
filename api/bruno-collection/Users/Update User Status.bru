@@ -1,0 +1,15 @@
+meta {
+  name: Update User Status
+  type: http
+  seq: 7
+}
+
+patch {
+  url: {{base}}/users/{{user_id}}/status?status=ACTIVE
+  body: none
+  auth: inherit
+}
+
+params:query {
+  status: ACTIVE
+}

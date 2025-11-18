@@ -1,0 +1,15 @@
+meta {
+  name: Seach Users
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base}}/users/search?query=Mohak
+  body: none
+  auth: inherit
+}
+
+params:query {
+  query: Mohak
+}

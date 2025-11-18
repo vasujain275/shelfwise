@@ -1,0 +1,19 @@
+meta {
+  name: Renew Book
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base}}/transactions/renew
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "transactionId": "t1r2a3n4-s5a6-7890-1234-567890abcdef",
+    "newDueDate": "2024-08-20",
+    "transactionNotes": "Renewed for another month"
+  }
+}

@@ -1,0 +1,42 @@
+meta {
+  name: Book 6
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{base}}/books
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "accessionNumber": "ACC006",
+    "isbn": "978-1111111111",
+    "title": "Lost Kingdoms of the East",
+    "authorPrimary": "Dr. Amelia Carter",
+    "publisher": "Eastern Archives Press",
+    "publicationPlace": "Cairo",
+    "publicationYear": 2015,
+    "edition": "Collector's Edition",
+    "pages": 900,
+    "language": "English",
+    "price": 99.99,
+    "billNumber": "BILL-2023-005",
+    "vendorName": "Antiquarian Books",
+    "purchaseDate": "2023-05-05",
+    "keywords": "history, ancient, civilizations",
+    "classificationNumber": "HIS-ANC-005",
+    "locationShelf": "E5",
+    "locationRack": "R5",
+    "bookCondition": "DAMAGED",
+    "bookStatus": "AVAILABLE",
+    "totalCopies": 1,
+    "availableCopies": 0,
+    "bookType": "REFERENCE",
+    "isReferenceOnly": true,
+    "notes": "Detailed exploration of forgotten empires and archaeological discoveries."
+  }
+  
+}

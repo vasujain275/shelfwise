@@ -1,0 +1,11 @@
+meta {
+  name: Get Transaction by ID
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{base}}/transactions/{{transaction_id}}
+  body: none
+  auth: inherit
+}

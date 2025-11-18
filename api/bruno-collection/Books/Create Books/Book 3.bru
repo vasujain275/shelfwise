@@ -1,0 +1,42 @@
+meta {
+  name: Book 3
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base}}/books
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "accessionNumber": "ACC003",
+    "isbn": "978-9876543210",
+    "title": "Cooking for Beginners",
+    "authorPrimary": "Gordon Ramsay",
+    "publisher": "Culinary Press",
+    "publicationPlace": "Paris",
+    "publicationYear": 2022,
+    "edition": "First Edition",
+    "pages": 280,
+    "language": "English",
+    "price": 30.50,
+    "billNumber": "BILL-2023-003",
+    "vendorName": "Kitchen Supplies",
+    "purchaseDate": "2023-03-10",
+    "keywords": "cooking, recipes, beginner",
+    "classificationNumber": "HOB-COO-003",
+    "locationShelf": "C3",
+    "locationRack": "R3",
+    "bookCondition": "EXCELLENT",
+    "bookStatus": "AVAILABLE",
+    "totalCopies": 7,
+    "availableCopies": 7,
+    "bookType": "GENERAL",
+    "isReferenceOnly": false,
+    "notes": "Simple and easy recipes."
+  }
+  
+}

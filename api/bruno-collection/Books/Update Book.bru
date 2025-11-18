@@ -1,0 +1,19 @@
+meta {
+  name: Update Book
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{base}}/books/{{book_id}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "The Great Novel (Revised Edition)",
+    "publicationYear": 2022,
+    "price": 29.99
+  }
+}

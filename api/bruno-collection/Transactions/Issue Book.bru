@@ -1,0 +1,20 @@
+meta {
+  name: Issue Book
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base}}/transactions/issue
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "bookId": "d1e2f3a4-b5c6-7890-1234-567890abcdef",
+    "userId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+    "dueDate": "2024-07-20",
+    "transactionNotes": "Standard issue"
+  }
+}

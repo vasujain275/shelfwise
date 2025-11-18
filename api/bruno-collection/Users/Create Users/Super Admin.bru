@@ -1,0 +1,36 @@
+meta {
+  name: Super Admin
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base}}/users
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "employeeId": "EMP001",
+    "fullName": "Dr. Anil Verma",
+    "email": "anil.verma@example.com",
+    "phoneMobile": "9876543210",
+    "phoneOffice": "01112345678",
+    "division": "Administration",
+    "department": "IT",
+    "designation": "Head of Library Systems",
+    "floorNumber": "1",
+    "officeRoom": "101",
+    "address": "Main Building",
+    "userRole": "SUPER_ADMIN",
+    "userStatus": "ACTIVE",
+    "booksIssued": 5,
+    "expirationDate": "2030-12-31",
+    "photoPath": "/photos/superadmin.jpg",
+    "emergencyContact": "Sunita Verma",
+    "emergencyPhone": "9876543211",
+    "remarks": "Library system superuser",
+    "password": "StrongPass123!"
+  }
+}

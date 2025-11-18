@@ -1,0 +1,11 @@
+meta {
+  name: Check if Book is Issued to User
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{base}}/transactions/book/{{book_id}}/user/{{user_id}}/is-issued
+  body: none
+  auth: inherit
+}

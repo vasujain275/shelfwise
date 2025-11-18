@@ -1,0 +1,18 @@
+meta {
+  name: Logout User
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base}}/auth/logout
+  body: none
+  auth: inherit
+}
+
+body:json {
+  {
+    "username":"EMP001",
+    "password":"StrongPass123!"
+  }
+}

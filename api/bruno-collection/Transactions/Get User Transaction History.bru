@@ -1,0 +1,11 @@
+meta {
+  name: Get User Transaction History
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{base}}/transactions/user/{{user_id}}/history
+  body: none
+  auth: inherit
+}

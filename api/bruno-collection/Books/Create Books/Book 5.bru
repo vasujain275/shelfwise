@@ -1,0 +1,42 @@
+meta {
+  name: Book 5
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{base}}/books
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "accessionNumber": "ACC005",
+    "isbn": "978-1111111111",
+    "title": "History of Ancient Civilizations",
+    "authorPrimary": "Indiana Jones",
+    "publisher": "History Guild",
+    "publicationPlace": "Cairo",
+    "publicationYear": 2015,
+    "edition": "Collector's Edition",
+    "pages": 900,
+    "language": "English",
+    "price": 99.99,
+    "billNumber": "BILL-2023-005",
+    "vendorName": "Antiquarian Books",
+    "purchaseDate": "2023-05-05",
+    "keywords": "history, ancient, civilizations",
+    "classificationNumber": "HIS-ANC-005",
+    "locationShelf": "E5",
+    "locationRack": "R5",
+    "bookCondition": "DAMAGED",
+    "bookStatus": "LOST",
+    "totalCopies": 1,
+    "availableCopies": 0,
+    "bookType": "REFERENCE",
+    "isReferenceOnly": true,
+    "notes": "Rare and valuable historical text."
+  }
+  
+}

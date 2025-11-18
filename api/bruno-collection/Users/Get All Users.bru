@@ -1,0 +1,19 @@
+meta {
+  name: Get All Users
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{base}}/users?paginate=true&page=0&size=1&sortDir=ASC&sortBy=fullName
+  body: none
+  auth: inherit
+}
+
+params:query {
+  paginate: true
+  page: 0
+  size: 1
+  sortDir: ASC
+  sortBy: fullName
+}

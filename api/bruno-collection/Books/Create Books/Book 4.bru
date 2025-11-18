@@ -1,0 +1,43 @@
+meta {
+  name: Book 4
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base}}/books
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "accessionNumber": "ACC004",
+    "isbn": "978-5555555555",
+    "title": "The Art of Programming",
+    "subtitle": "From Basics to Advanced",
+    "authorPrimary": "Ada Lovelace",
+    "publisher": "Tech Books",
+    "publicationPlace": "San Francisco",
+    "publicationYear": 2021,
+    "edition": "Second Edition",
+    "pages": 600,
+    "language": "English",
+    "price": 55.75,
+    "billNumber": "BILL-2023-004",
+    "vendorName": "Code Books",
+    "purchaseDate": "2023-04-01",
+    "keywords": "programming, software, development",
+    "classificationNumber": "COM-PRO-004",
+    "locationShelf": "D4",
+    "locationRack": "R4",
+    "bookCondition": "FAIR",
+    "bookStatus": "AVAILABLE",
+    "totalCopies": 4,
+    "availableCopies": 4,
+    "bookType": "REPORT",
+    "isReferenceOnly": false,
+    "notes": "Comprehensive guide for programmers."
+  }
+  
+}

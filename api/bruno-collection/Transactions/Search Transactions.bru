@@ -1,0 +1,27 @@
+meta {
+  name: Search Transactions
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{base}}/transactions/search?page=0&size=10&sortBy=issueDate&sortDir=DESC
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "userId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+    "status": "ISSUED",
+    "issueDateFrom": "2024-01-01",
+    "issueDateTo": "2024-07-06"
+  }
+}
+
+params:query {
+  page: 0
+  size: 10
+  sortBy: issueDate
+  sortDir: DESC
+}

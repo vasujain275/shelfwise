@@ -1,0 +1,14 @@
+meta {
+  name: Refresh Token
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base}}/auth/refresh
+  body: none
+  auth: inherit
+}
+
+cookie: refreshToken
+  refreshToken: your_refresh_token_here

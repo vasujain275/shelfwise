@@ -1,0 +1,88 @@
+spring:
+  application:
+    name: shelfwise-api
+  servlet:
+    multipart:
+      max-file-size: 50MB # Maximum size of a single uploaded file
+      max-request-size: 50MB # Maximum size of the entire multipart request
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: false
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/library_db?useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: rootpassword
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9080
+
+  # Static resource configuration for React SPA
+  web:
+    resources:
+      static-locations: classpath:/static/
+      add-mappings: true
+
+server:
+  port: 9080
+
+jwt:
+  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+  access-token:
+    expiration: 36000 # 10 hour
+  refresh-token:
+    expiration: 864000 # 240 hours
+
+app:
+  cookie:
+    domain: localhost
+    secure: false
+  name: "ShelfWise Library Management System"
+  version: "1.0.0"
+  super-admin:
+    employee-id: EMP001
+    full-name: Dr. Anil Verma
+    email: superadmin@example.com
+    password: StrongPass123!
+    department: IT
+    division: Administration
+    phone-mobile: "+919876543210"
+    phone-office: "01123456789"
+    designation: "Chief Librarian"
+    floor-number: "3"
+    office-room: "301"
+    address: "Main Office"
+    books-issued: 0
+    photo-path: "/photos/superadmin.jpg"
+    emergency-contact: "Dr. Anil Verma's Family"
+    emergency-phone: "+919988776655"
+    remarks: "Initial super admin user for system setup"
+    expiration-date: "2030-12-31"
+
+logging:
+  level:
+    com.shelfwise.library: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: INFO
+  file:
+    name: logs/library-management.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+springdoc:
+  webjars:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs

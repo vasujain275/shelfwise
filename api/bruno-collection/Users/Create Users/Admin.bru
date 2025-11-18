@@ -1,0 +1,37 @@
+meta {
+  name: Admin
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base}}/users
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "employeeId": "EMP002",
+    "fullName": "Ms. Kavita Sharma",
+    "email": "kavita.sharma@example.com",
+    "phoneMobile": "9876543212",
+    "phoneOffice": "01112345679",
+    "division": "Library",
+    "department": "Operations",
+    "designation": "Library Admin",
+    "floorNumber": "2",
+    "officeRoom": "204",
+    "address": "Library Wing",
+    "userRole": "ADMIN",
+    "userStatus": "ACTIVE",
+    "booksIssued": 5,
+    "expirationDate": "2026-06-30",
+    "photoPath": "/photos/admin.jpg",
+    "emergencyContact": "Rajeev Sharma",
+    "emergencyPhone": "9876543213",
+    "remarks": "Manages book inventory",
+    "password": "AdminSecure88!"
+  }
+
+}

@@ -1,0 +1,37 @@
+meta {
+  name: Member
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base}}/users
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "employeeId": "EMP003",
+    "fullName": "Mr. Rohan Mehta",
+    "email": "rohan.mehta@example.com",
+    "phoneMobile": "9876543214",
+    "phoneOffice": "01112345680",
+    "division": "Research",
+    "department": "Avionics",
+    "designation": "Scientist B",
+    "floorNumber": "3",
+    "officeRoom": "307",
+    "address": "R&D Block",
+    "userRole": "MEMBER",
+    "userStatus": "ACTIVE",
+    "booksIssued": 5,
+    "expirationDate": "2025-12-31",
+    "photoPath": "/photos/member.jpg",
+    "emergencyContact": "Meena Mehta",
+    "emergencyPhone": "9876543215",
+    "remarks": "Regular library member",
+    "password": "MemberPass456!"
+  }
+
+}

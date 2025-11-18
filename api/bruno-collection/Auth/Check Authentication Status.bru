@@ -1,0 +1,11 @@
+meta {
+  name: Check Authentication Status
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{base}}/auth/status
+  body: none
+  auth: inherit
+}

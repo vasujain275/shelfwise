@@ -1,0 +1,16 @@
+meta {
+  name: Get Transactions by Book ID
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{base}}/transactions/book/{{book_id}}?page=0&size=10
+  body: none
+  auth: inherit
+}
+
+params:query {
+  page: 0
+  size: 10
+}

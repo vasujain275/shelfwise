@@ -1,0 +1,42 @@
+meta {
+  name: Book 1
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base}}/books
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "accessionNumber": "ACC001",
+    "isbn": "978-0000000001",
+    "title": "Chrono Quest",
+    "subtitle": "A Journey Beyond Time",
+    "authorPrimary": "Jane Timewalker",
+    "publisher": "Fantasy House",
+    "publicationPlace": "New York",
+    "publicationYear": 2020,
+    "edition": "First Edition",
+    "pages": 420,
+    "language": "English",
+    "price": 45.00,
+    "billNumber": "BILL-2023-001",
+    "vendorName": "Book World",
+    "purchaseDate": "2023-01-15",
+    "keywords": "adventure, time travel, fantasy",
+    "classificationNumber": "FIC-ADV-001",
+    "locationShelf": "A1",
+    "locationRack": "R1",
+    "bookCondition": "EXCELLENT",
+    "bookStatus": "AVAILABLE",
+    "totalCopies": 5,
+    "availableCopies": 5,
+    "bookType": "GENERAL",
+    "isReferenceOnly": false,
+    "notes": "Popular adventure novel."
+  }
+}
