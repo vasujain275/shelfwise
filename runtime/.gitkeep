@@ -1,0 +1,2 @@
+# This folder contains runtime files (JAR, config, logs, uploads)
+# These files are gitignored but the folder structure is preserved

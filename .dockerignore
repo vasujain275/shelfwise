@@ -1,0 +1,66 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+README.md
+LICENSE
+Instructions.md
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+web/node_modules
+web/dist
+web/.vite
+web/.turbo
+
+# Java/Maven
+api/target
+api/.mvn
+api/mvnw
+api/mvnw.cmd
+*.class
+*.log
+
+# Runtime files
+runtime/
+prod/
+prod-assets/
+logs/
+uploads/
+*.jar
+
+# Bruno API testing
+bruno-collection/
+
+# Samples
+samples/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Test files
+**/*.test.js
+**/*.test.ts
+**/*.spec.js
+**/*.spec.ts
+api/src/test/
+
+# Build artifacts
+build/
+dist/
+out/
