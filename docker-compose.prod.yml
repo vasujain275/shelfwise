@@ -5,33 +5,7 @@ services:
   app:
     image: vasujain275/shelfwise:latest
     container_name: shelfwise-app-prod
-    env_file:
-      - .env
     environment:
-      # Database configuration - External MySQL Server
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-
-      # JWT Configuration
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_ACCESSTOKEN_EXPIRATION: ${JWT_ACCESSTOKEN_EXPIRATION:-36000}
-      JWT_REFRESHTOKEN_EXPIRATION: ${JWT_REFRESHTOKEN_EXPIRATION:-864000}
-
-      # Application settings
-      SERVER_PORT: ${SERVER_PORT:-9080}
-      SPRING_JPA_HIBERNATE_DDLAUTO: ${SPRING_JPA_HIBERNATE_DDLAUTO:-update}
-      SPRING_JPA_SHOWSQL: ${SPRING_JPA_SHOWSQL:-false}
-
-      # Cookie settings
-      APP_COOKIE_DOMAIN: ${APP_COOKIE_DOMAIN}
-      APP_COOKIE_SECURE: ${APP_COOKIE_SECURE:-true}
-
-      # Logging
-      LOGGING_LEVEL_COM_SHELFWISE_LIBRARY: ${LOG_LEVEL:-INFO}
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: ${LOG_LEVEL_SECURITY:-WARN}
-      LOGGING_FILE_NAME: /app/logs/library-management.log
-
       # JVM Options
       JAVA_OPTS: >
         -XX:+UseContainerSupport
@@ -41,9 +15,12 @@ services:
         -Djava.security.egd=file:/dev/./urandom
         -XX:+HeapDumpOnOutOfMemoryError
         -XX:HeapDumpPath=/app/logs/heap_dump.hprof
+      # Spring configuration location
+      SPRING_OPTS: --spring.config.location=file:/app/config/application.yaml
     ports:
-      - "${APP_PORT:-9080}:9080"
+      - "9080:9080"
     volumes:
+      - ./application.yaml:/app/config/application.yaml:ro
       - app_logs:/app/logs
       - app_uploads:/app/uploads
     restart: always

@@ -56,21 +56,23 @@ docker run -d \
 
 ## 🔐 Production Deployment
 
-### 1. Set Up Environment Variables
+### 1. Set Up Configuration File
 
 ```bash
-# Copy the example file
-cp .env.example .env
+# Copy the example configuration
+cp application.yaml.example application.yaml
 
-# Edit the .env file with secure credentials
-nano .env
+# Edit the application.yaml file with secure credentials
+nano application.yaml
 ```
 
-**Important**: Update these values in `.env`:
-- `MYSQL_ROOT_PASSWORD`: Strong MySQL root password
-- `MYSQL_PASSWORD`: Strong MySQL user password
-- `JWT_SECRET`: Secure random key (use: `openssl rand -hex 32`)
-- `APP_COOKIE_DOMAIN`: Your production domain
+**Important**: Update these values in `application.yaml`:
+- `spring.datasource.url`: Your MySQL database connection URL
+- `spring.datasource.username`: Database username
+- `spring.datasource.password`: Strong database password
+- `jwt.secret`: Secure random key (use: `openssl rand -hex 32`)
+- `app.cookie.domain`: Your production domain
+- `app.cookie.secure`: Set to `true` for HTTPS
 - Other settings as needed
 
 ### 2. Deploy with Production Configuration
@@ -88,32 +90,35 @@ docker-compose -f docker-compose.prod.yml down
 
 ## 🔧 Configuration
 
-### Environment Variables
+### Application Configuration File
 
-The application supports configuration via environment variables:
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `SPRING_DATASOURCE_URL` | MySQL connection URL | - |
-| `SPRING_DATASOURCE_USERNAME` | Database username | - |
-| `SPRING_DATASOURCE_PASSWORD` | Database password | - |
-| `JWT_SECRET` | JWT signing secret | - |
-| `SERVER_PORT` | Application port | 9080 |
-| `SPRING_JPA_HIBERNATE_DDL_AUTO` | Hibernate DDL mode | update |
-| `LOGGING_LEVEL_COM_SHELFWISE_LIBRARY` | Log level | INFO |
-
-### Custom Configuration File
-
-To use a custom `application.yaml`:
+The application uses `application.yaml` for configuration (similar to the `run.sh` approach). Create your configuration file:
 
 ```bash
-# Create your config
-mkdir -p ./config
-cp ./api/src/main/resources/application.yaml ./config/
+# Copy the example
+cp application.yaml.example application.yaml
 
-# Mount it in docker-compose.yml
+# Edit with your settings
+nano application.yaml
+```
+
+Key configuration sections:
+
+| Section | Description | Example |
+|---------|-------------|---------|
+| `spring.datasource` | Database connection | MySQL URL, username, password |
+| `jwt.secret` | JWT signing secret | 256-bit hex string |
+| `jwt.access-token.expiration` | Access token lifetime | 36000 (10 hours in seconds) |
+| `jwt.refresh-token.expiration` | Refresh token lifetime | 864000 (240 hours in seconds) |
+| `server.port` | Application port | 9080 |
+| `app.cookie.domain` | Cookie domain | yourdomain.com |
+| `app.cookie.secure` | Use secure cookies | true (for HTTPS) |
+| `logging.level` | Logging configuration | INFO, DEBUG, WARN, etc. |
+
+The configuration file is mounted as a read-only volume in the Docker container:
+```yaml
 volumes:
-  - ./config/application.yaml:/app/config/application.yaml:ro
+  - ./application.yaml:/app/config/application.yaml:ro
 ```
 
 ## 📊 Monitoring & Management
