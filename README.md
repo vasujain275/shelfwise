@@ -120,14 +120,27 @@ ShelfWise is a full-featured, production-ready library management system designe
 
 ### 🎨 **User Interface**
 
-- 🌓 **Dark/Light Mode** theme support
+- 🌓 **Dark/Light Mode** theme support with CSS variables
+- 🎭 **shadcn/ui Components** with customizable theming system
 - 📱 **Responsive Design** for all devices
-- 🎯 **Modern UI Components** with Radix UI and Tailwind CSS
+- 🎯 **Modern UI Components** built on Radix UI primitives
 - ⚡ **Smooth Animations** with Framer Motion
 - 🔍 **Advanced Search & Filters** across all modules
 - 📄 **Pagination** for large datasets
 - 🔔 **Toast Notifications** for user feedback
 - 📊 **Interactive Charts** with Recharts
+- 🎨 **Consistent Design System** with Tailwind CSS
+
+### 🔄 **CI/CD Pipeline**
+
+- ✅ **Automated Builds** on every push to main branch
+- 🐳 **Multi-Architecture Support** (linux/amd64, linux/arm64)
+- 📦 **Automatic Docker Image Publishing** to Docker Hub
+- 🏷️ **Version Tagging** from pom.xml
+- 💾 **Build Caching** with GitHub Actions
+- 🚀 **Zero-Downtime Deployments** with health checks
+- 📊 **Resource Limits** configured in Docker Compose
+- 🔄 **Auto-restart** on application crashes
 
 ---
 
@@ -155,7 +168,8 @@ ShelfWise is a full-featured, production-ready library management system designe
 | ⚛️ **React** | 19.1.0 | UI library |
 | 📘 **TypeScript** | 5.8.3 | Type safety |
 | 🎨 **Tailwind CSS** | 4.1.10 | Styling framework |
-| 🧩 **Radix UI** | Latest | Accessible components |
+| 🎭 **shadcn/ui** | Latest | Component library with CSS variables theming |
+| 🧩 **Radix UI** | Latest | Accessible component primitives |
 | 🔄 **TanStack Query** | 5.83.0 | Data fetching & caching |
 | 🗂️ **Zustand** | 5.0.5 | State management |
 | 🎭 **Framer Motion** | 12.23.0 | Animations |
@@ -170,7 +184,9 @@ ShelfWise is a full-featured, production-ready library management system designe
 
 ### **DevOps & Tools**
 
-- 🐳 **Docker** - Containerization
+- 🐳 **Docker** - Containerization with multi-arch support (amd64/arm64)
+- 🔄 **GitHub Actions** - CI/CD pipeline for automated builds
+- 🐋 **Docker Hub** - Automated image publishing
 - 📦 **Maven** - Backend dependency management
 - 📦 **pnpm** - Frontend package manager
 - 🔧 **Bruno** - API testing collection
@@ -255,14 +271,65 @@ pnpm dev
 
 The web application will be available at `http://localhost:5173`
 
-### **🐳 Docker Deployment**
+### **Development Mode**
 
-For production deployment using Docker:
+For development with auto-restart on backend changes:
 
 ```bash
-# Build and run with Docker Compose
+# Build frontend, backend, and run with auto-restart
+./dev.sh
+```
+
+This script will:
+1. Build the React frontend with Vite
+2. Copy frontend build to Spring Boot static resources
+3. Build the backend JAR
+4. Run the application with auto-restart on crashes
+
+### **Production Build**
+
+For production deployment without Docker:
+
+```bash
+# Build and run production-ready application
+./run.sh
+```
+
+### **🐳 Docker Deployment**
+
+#### **Using Pre-built Image**
+
+Pull and run the latest image from Docker Hub:
+
+```bash
+# Pull the latest image
+docker pull vasujain275/shelfwise:latest
+
+# Run with Docker Compose
 docker-compose -f docker-compose.prod.yml up -d
 ```
+
+#### **Building Custom Image**
+
+Build your own Docker image:
+
+```bash
+# Build multi-architecture image
+docker buildx build --platform linux/amd64,linux/arm64 -t shelfwise:custom .
+
+# Run the custom image
+docker run -d -p 9080:9080 \
+  -v ./application.yaml:/app/config/application.yaml:ro \
+  -v app_logs:/app/logs \
+  -v app_uploads:/app/uploads \
+  shelfwise:custom
+```
+
+**Note**: The application runs on port **9080** by default. Update `application.yaml` to configure:
+- Database connection
+- JWT secrets
+- Cookie domain settings
+- File upload paths
 
 Refer to [DOCKER.md](DOCKER.md) for detailed Docker deployment instructions.
 
