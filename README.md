@@ -324,8 +324,6 @@ docker run -d -p 9080:9080 \
 - Cookie domain settings
 - File upload paths
 
-Refer to [DOCKER.md](DOCKER.md) for detailed Docker deployment instructions.
-
 ---
 
 ## 📖 Documentation
@@ -500,7 +498,6 @@ shelfwise/
 │
 ├── docker-compose.prod.yml       # Production Docker Config
 ├── Dockerfile                    # Docker Build Instructions
-├── DOCKER.md                     # Docker Documentation
 └── README.md                     # This File
 ```
 
@@ -513,6 +510,7 @@ shelfwise/
 <div align="center">
 <table>
   <tr>
+    <td align="center"><b>🎛️ Super Admin Dashboard</b><br/>Complete system control and analytics</td>
     <td align="center"><b>📊 Admin Dashboard</b><br/>System-wide statistics and metrics</td>
     <td align="center"><b>📚 Member Dashboard</b><br/>Personal borrowing overview</td>
   </tr>
