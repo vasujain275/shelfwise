@@ -223,14 +223,13 @@ CREATE DATABASE shelfwise CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 #### **3. Backend Configuration**
 
-Navigate to the API directory and configure application properties:
+Copy and configure the application properties:
 
 ```bash
-cd api
-cp ../application.yaml.example src/main/resources/application.yaml
+cp application.yaml.example api/src/main/resources/application.yaml
 ```
 
-Edit `src/main/resources/application.yaml` with your database credentials and JWT settings:
+Edit `api/src/main/resources/application.yaml` with your database credentials and JWT settings:
 
 ```yaml
 spring:
@@ -247,29 +246,23 @@ jwt:
     expiration: 604800
 ```
 
-#### **4. Build and Run Backend**
+#### **4. Run the Application**
+
+**Important**: ShelfWise is designed as a unified application where the React frontend is bundled into the Spring Boot backend as static resources. You cannot run the frontend and backend separately.
+
+Use the development script to build and run the complete application:
 
 ```bash
-# Using Maven wrapper
-./mvnw clean install
-./mvnw spring-boot:run
-
-# Or using Maven
-mvn clean install
-mvn spring-boot:run
+./dev.sh
 ```
 
-The API will be available at `http://localhost:8080`
+This script performs the following steps:
+1. **Builds the React frontend** using Vite
+2. **Copies the frontend build** to Spring Boot's `src/main/resources/static` directory
+3. **Packages the Spring Boot application** with the embedded frontend
+4. **Runs the unified application** with auto-restart on crashes
 
-#### **5. Frontend Setup**
-
-```bash
-cd ../web
-pnpm install
-pnpm dev
-```
-
-The web application will be available at `http://localhost:5173`
+The complete application will be available at `http://localhost:8080` (or your configured port)
 
 ### **Development Mode**
 
