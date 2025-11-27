@@ -262,7 +262,7 @@ This script performs the following steps:
 3. **Packages the Spring Boot application** with the embedded frontend
 4. **Runs the unified application** with auto-restart on crashes
 
-The complete application will be available at `http://localhost:8080` (or your configured port)
+The complete application will be available at `http://localhost:9080` (or your configured port)
 
 ### **Development Mode**
 
@@ -334,8 +334,8 @@ Refer to [DOCKER.md](DOCKER.md) for detailed Docker deployment instructions.
 
 Once the backend is running, access the interactive API documentation:
 
-- **Swagger UI**: `http://localhost:8080/swagger-ui.html`
-- **OpenAPI Spec**: `http://localhost:8080/v3/api-docs`
+- **Swagger UI**: `http://localhost:9080/swagger-ui.html`
+- **OpenAPI Spec**: `http://localhost:9080/v3/api-docs`
 
 ### **API Collections**
 
