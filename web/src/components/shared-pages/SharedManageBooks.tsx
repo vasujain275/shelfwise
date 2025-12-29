@@ -1,27 +1,53 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ConfirmationModal from "@/components/modals/ConfirmationModal";
+import EditBookModal from "@/components/modals/EditBookModal";
+import type { Column } from "@/components/shared";
+import {
+  DataTable,
+  ErrorState,
+  PageHeader,
+  SearchInput,
+  StatusBadge,
+} from "@/components/shared";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Loader2, Search, Edit, Trash2, AlertCircle } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { useAuthStore } from "@/store/authStore";
-import { toast } from "sonner";
-import * as z from "zod";
-import { useForm } from "react-hook-form";
+import type { BookSearchResponse, Book as BookType } from "@/types/book";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import type { Book, BookSearchResponse } from "@/types/book";
-import ConfirmationModal from '@/components/modals/ConfirmationModal';
-import EditBookModal from '@/components/modals/EditBookModal';
+import { AnimatePresence, motion } from "framer-motion";
+import { AlertCircle, Book, Edit, Trash2 } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
 
 // --- Book Form Schema (reuse from SharedAddBook) ---
-const bookConditions = ["EXCELLENT", "GOOD", "FAIR", "POOR", "DAMAGED"] as const;
-const bookStatuses = ["AVAILABLE", "ISSUED", "LOST", "DAMAGED", "UNDER_REPAIR", "UNAVAILABLE"] as const;
-const bookTypes = ["REFERENCE", "GENERAL", "JOURNAL", "MAGAZINE", "THESIS", "REPORT", "TEST", "GIFTED", "OTHER"] as const;
+const bookConditions = [
+  "EXCELLENT",
+  "GOOD",
+  "FAIR",
+  "POOR",
+  "DAMAGED",
+] as const;
+const bookStatuses = [
+  "AVAILABLE",
+  "ISSUED",
+  "LOST",
+  "DAMAGED",
+  "UNDER_REPAIR",
+  "UNAVAILABLE",
+] as const;
+const bookTypes = [
+  "REFERENCE",
+  "GENERAL",
+  "JOURNAL",
+  "MAGAZINE",
+  "THESIS",
+  "REPORT",
+  "TEST",
+  "GIFTED",
+  "OTHER",
+] as const;
 const bookFormSchema = z.object({
   accessionNumber: z.string().min(1, "Accession Number is required."),
   isbn: z.string().optional(),
@@ -56,14 +82,14 @@ type BookFormValues = z.infer<typeof bookFormSchema>;
 const SharedManageBooks: React.FC = () => {
   const { user } = useAuthStore();
   const [query, setQuery] = useState("");
-  const [books, setBooks] = useState<Book[]>([]);
+  const [books, setBooks] = useState<BookType[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [editBook, setEditBook] = useState<Book | null>(null);
+  const [editBook, setEditBook] = useState<BookType | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [deleteBook, setDeleteBook] = useState<Book | null>(null);
+  const [deleteBook, setDeleteBook] = useState<BookType | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -74,8 +100,12 @@ const SharedManageBooks: React.FC = () => {
         <Card className="border-red-200 bg-red-50/50">
           <CardContent className="p-8 text-center">
             <AlertCircle className="mx-auto mb-4 w-12 h-12 text-red-500" />
-            <h2 className="text-xl font-bold text-red-700 mb-2">Access Denied</h2>
-            <p className="text-red-600">Only Admins and Super Admins can access the Manage Books page.</p>
+            <h2 className="text-xl font-bold text-red-700 mb-2">
+              Access Denied
+            </h2>
+            <p className="text-red-600">
+              Only Admins and Super Admins can access the Manage Books page.
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -83,28 +113,33 @@ const SharedManageBooks: React.FC = () => {
   }
 
   // --- Fetch Books ---
-  const fetchBooks = useCallback(async (page: number) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      let url;
-      if (query && query.trim() !== "") {
-        url = `/api/books/search?query=${encodeURIComponent(query)}&page=${page}&size=10`;
-      } else {
-        url = `/api/books?page=${page}&size=10&sortBy=accessionNumber&sortDir=ASC`;
+  const fetchBooks = useCallback(
+    async (page: number) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        let url;
+        if (query && query.trim() !== "") {
+          url = `/api/books/search?query=${encodeURIComponent(
+            query
+          )}&page=${page}&size=10`;
+        } else {
+          url = `/api/books?page=${page}&size=10&sortBy=accessionNumber&sortDir=ASC`;
+        }
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Failed to fetch books");
+        const result: BookSearchResponse = await response.json();
+        setBooks(result.data);
+        setTotalPages(result.pagination.totalPages);
+        setCurrentPage(result.pagination.currentPage);
+      } catch (err) {
+        setError("Failed to fetch books. Please try again later.");
+      } finally {
+        setIsLoading(false);
       }
-      const response = await fetch(url);
-      if (!response.ok) throw new Error("Failed to fetch books");
-      const result: BookSearchResponse = await response.json();
-      setBooks(result.data);
-      setTotalPages(result.pagination.totalPages);
-      setCurrentPage(result.pagination.currentPage);
-    } catch (err) {
-      setError("Failed to fetch books. Please try again later.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [query]);
+    },
+    [query]
+  );
 
   useEffect(() => {
     fetchBooks(0);
@@ -114,43 +149,13 @@ const SharedManageBooks: React.FC = () => {
     fetchBooks(page);
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
-    setCurrentPage(0);
-  };
-
-  // Helper to generate pagination window
-  const getPaginationWindow = (current: number, total: number, window: number = 2) => {
-    const pages: (number | 'ellipsis')[] = [];
-    if (total <= 7 + window * 2) {
-      for (let i = 0; i < total; i++) pages.push(i);
-    } else {
-      const left = Math.max(0, current - window);
-      const right = Math.min(total - 1, current + window);
-      if (left > 1) {
-        pages.push(0);
-        pages.push('ellipsis');
-      } else {
-        for (let i = 0; i < left; i++) pages.push(i);
-      }
-      for (let i = left; i <= right; i++) pages.push(i);
-      if (right < total - 2) {
-        pages.push('ellipsis');
-        pages.push(total - 1);
-      } else {
-        for (let i = right + 1; i < total; i++) pages.push(i);
-      }
-    }
-    return pages;
-  };
-
   // --- Edit Book Modal Logic ---
   const editForm = useForm<BookFormValues>({
     resolver: zodResolver(bookFormSchema),
     defaultValues: {},
   });
 
-  const openEditModal = (book: Book) => {
+  const openEditModal = (book: BookType) => {
     setEditBook(book);
     setIsEditModalOpen(true);
     // Map all nulls to undefined for optional fields
@@ -199,7 +204,9 @@ const SharedManageBooks: React.FC = () => {
       const { accessionNumber, ...rest } = values;
       const payload = {
         ...rest,
-        purchaseDate: values.purchaseDate ? format(new Date(values.purchaseDate), "yyyy-MM-dd") : undefined,
+        purchaseDate: values.purchaseDate
+          ? format(new Date(values.purchaseDate), "yyyy-MM-dd")
+          : undefined,
       };
       const response = await fetch(`/api/books/${editBook.id}`, {
         method: "PUT",
@@ -213,13 +220,15 @@ const SharedManageBooks: React.FC = () => {
       toast.success("Book updated successfully!");
       closeEditModal();
       fetchBooks(currentPage);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update book.");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to update book.";
+      toast.error(message);
     }
   };
 
   // --- Delete Book Dialog Logic ---
-  const openDeleteDialog = (book: Book) => {
+  const openDeleteDialog = (book: BookType) => {
     setDeleteBook(book);
     setIsDeleteDialogOpen(true);
   };
@@ -231,7 +240,9 @@ const SharedManageBooks: React.FC = () => {
     if (!deleteBook) return;
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/books/${deleteBook.id}`, { method: "DELETE" });
+      const response = await fetch(`/api/books/${deleteBook.id}`, {
+        method: "DELETE",
+      });
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to delete book.");
@@ -239,123 +250,132 @@ const SharedManageBooks: React.FC = () => {
       toast.success("Book deleted successfully!");
       closeDeleteDialog();
       fetchBooks(currentPage);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to delete book.");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to delete book.";
+      toast.error(message);
     } finally {
       setIsDeleting(false);
     }
   };
 
+  // Table columns definition
+  const columns: Column<BookType>[] = [
+    {
+      key: "accessionNumber",
+      header: "Accession #",
+      mobileLabel: "Accession",
+      className: "font-mono",
+    },
+    {
+      key: "title",
+      header: "Title",
+      className: "font-medium max-w-[200px] truncate",
+    },
+    {
+      key: "authorPrimary",
+      header: "Author",
+      hideOnMobile: true,
+      className: "max-w-[150px] truncate",
+    },
+    {
+      key: "location",
+      header: "Location",
+      hideOnMobile: true,
+      render: (book) =>
+        book.locationShelf && book.locationRack
+          ? `${book.locationShelf}.${book.locationRack}`
+          : "-",
+    },
+    {
+      key: "bookStatus",
+      header: "Status",
+      render: (book) => <StatusBadge status={book.bookStatus} size="sm" />,
+    },
+  ];
+
+  // Mobile card render
+  const renderMobileCard = (book: BookType, actions?: React.ReactNode) => (
+    <Card className="hover:shadow-md transition-shadow">
+      <CardContent className="p-4">
+        <div className="flex justify-between items-start gap-2 mb-2">
+          <div className="flex-1 min-w-0">
+            <h3 className="font-medium text-sm truncate">{book.title}</h3>
+            <p className="text-xs text-muted-foreground truncate">
+              {book.authorPrimary}
+            </p>
+          </div>
+          <StatusBadge status={book.bookStatus} size="sm" />
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-xs font-mono text-muted-foreground">
+            {book.accessionNumber}
+          </span>
+          <div className="flex gap-1">{actions}</div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   // --- Render ---
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="container mx-auto p-4 md:p-6">
-      <Card className="shadow-lg overflow-hidden">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Manage Books</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-            <div className="relative w-full md:w-96">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search by title, author, or ISBN..."
-                className="w-full pl-10 py-3 text-base"
-                value={query}
-                onChange={handleSearch}
-              />
-            </div>
-          </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="space-y-6"
+    >
+      <PageHeader
+        title="Manage Books"
+        description="View, edit, and delete books in the library"
+        icon={Book}
+      />
 
-          <AnimatePresence mode="wait">
-            {isLoading && (
-              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="flex items-center justify-center my-8">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="ml-2">Loading books...</p>
-              </motion.div>
-            )}
-            {error && (
-              <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-                <Alert variant="destructive" className="max-w-2xl mx-auto">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              </motion.div>
-            )}
-            {!isLoading && !error && books.length > 0 && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <div className="rounded-lg border overflow-hidden shadow-sm">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Accession Number</TableHead>
-                        <TableHead>Title</TableHead>
-                        <TableHead>Author</TableHead>
-                        <TableHead>Location</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-center">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {books.map((book) => (
-                        <TableRow key={book.id}>
-                          <TableCell className="font-mono">{book.accessionNumber}</TableCell>
-                          <TableCell>{book.title}</TableCell>
-                          <TableCell>{book.authorPrimary}</TableCell>
-                          <TableCell>{book.locationShelf && book.locationRack ? `${book.locationShelf}.${book.locationRack}` : ''}</TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className="capitalize">
-                              {book.bookStatus.toLowerCase()}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="flex gap-2 justify-center">
-                            <Button size="icon" variant="outline" onClick={() => openEditModal(book)}>
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button size="icon" variant="destructive" onClick={() => openDeleteDialog(book)}>
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-                <div className="mt-6 flex justify-center">
-                  <Pagination>
-                    <PaginationContent>
-                      <PaginationItem>
-                        <PaginationPrevious onClick={() => handlePageChange(Math.max(0, currentPage - 1))} />
-                      </PaginationItem>
-                      {getPaginationWindow(currentPage, totalPages, 2).map((page, i) => (
-                        page === 'ellipsis' ? (
-                          <PaginationItem key={`ellipsis-${i}`}>
-                            <span className="px-2">...</span>
-                          </PaginationItem>
-                        ) : (
-                          <PaginationItem key={page}>
-                            <PaginationLink isActive={page === currentPage} onClick={() => handlePageChange(page as number)}>
-                              {(page as number) + 1}
-                            </PaginationLink>
-                          </PaginationItem>
-                        )
-                      ))}
-                      <PaginationItem>
-                        <PaginationNext onClick={() => handlePageChange(Math.min(totalPages - 1, currentPage + 1))} />
-                      </PaginationItem>
-                    </PaginationContent>
-                  </Pagination>
-                </div>
-              </motion.div>
-            )}
-            {!isLoading && !error && books.length === 0 && (
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} className="text-center text-muted-foreground mt-8">
-                <p>No books found. Try a different search.</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </CardContent>
-      </Card>
+      <div className="max-w-md">
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          placeholder="Search by title, author, or ISBN..."
+        />
+      </div>
+
+      {error && (
+        <ErrorState message={error} onRetry={() => fetchBooks(currentPage)} />
+      )}
+
+      {!error && (
+        <DataTable
+          data={books}
+          columns={columns}
+          keyExtractor={(book) => book.id}
+          isLoading={isLoading}
+          emptyTitle="No books found"
+          emptyMessage="No books found. Try a different search term."
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          mobileCardRender={renderMobileCard}
+          actions={(book) => (
+            <>
+              <Button
+                size="icon"
+                variant="outline"
+                className="h-8 w-8"
+                onClick={() => openEditModal(book)}
+              >
+                <Edit className="w-4 h-4" />
+              </Button>
+              <Button
+                size="icon"
+                variant="destructive"
+                className="h-8 w-8"
+                onClick={() => openDeleteDialog(book)}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </>
+          )}
+        />
+      )}
 
       {/* Edit Book Modal */}
       <AnimatePresence>
@@ -379,13 +399,18 @@ const SharedManageBooks: React.FC = () => {
             onConfirm={handleDelete}
             title="Confirm Deletion"
             description={`Are you sure you want to delete "${deleteBook?.title}"? This action cannot be undone.`}
-            details={deleteBook && (
-              <div className="space-y-2 text-sm">
-                <div><b>Accession Number:</b> {deleteBook.accessionNumber}</div>
-                <div><b>Author:</b> {deleteBook.authorPrimary}</div>
-                {/* Add more fields as needed */}
-              </div>
-            )}
+            details={
+              deleteBook && (
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <b>Accession Number:</b> {deleteBook.accessionNumber}
+                  </div>
+                  <div>
+                    <b>Author:</b> {deleteBook.authorPrimary}
+                  </div>
+                </div>
+              )
+            }
             confirmLabel="Delete"
             confirmVariant="destructive"
             loading={isDeleting}
