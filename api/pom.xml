@@ -10,7 +10,7 @@
     </parent>
     <groupId>me.vasujain</groupId>
     <artifactId>shelfwise</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <name>ShelfWise</name>
     <description>ShelfWise Library Management System</description>
     <url/>
