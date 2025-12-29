@@ -210,7 +210,7 @@ const HomePage: React.FC = () => {
                 transition={{ duration: 0.3 }}
               >
                 <img
-                  src="/shelfwise.png"
+                  src="/shelfwise.webp"
                   alt="ShelfWise Logo"
                   className="w-24 h-24 object-contain drop-shadow-2xl"
                 />
@@ -523,7 +523,7 @@ const HomePage: React.FC = () => {
           <motion.div className="text-center" variants={itemVariants}>
             <div className="flex items-center justify-center mb-6">
               <img
-                src="/shelfwise.png"
+                src="/shelfwise.webp"
                 alt="ShelfWise Logo"
                 className="w-12 h-12 object-contain mr-4"
               />

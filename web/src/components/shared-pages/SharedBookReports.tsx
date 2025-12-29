@@ -109,7 +109,7 @@ const SharedBookReports: React.FC = () => {
     <div className="container mx-auto py-8 px-2 md:px-8">
       <div className="flex flex-col items-center justify-center mb-8">
         <img
-          src="/shelfwise.png"
+          src="/shelfwise.webp"
           alt="ShelfWise Logo"
           className="w-20 h-20 mb-2"
         />

@@ -200,7 +200,7 @@ const LoginPage: React.FC = () => {
                     transition={{ duration: 0.3 }}
                   >
                     <img
-                      src="/shelfwise.png"
+                      src="/shelfwise.webp"
                       alt="ShelfWise Logo"
                       className="w-20 h-20 object-contain drop-shadow-lg"
                     />

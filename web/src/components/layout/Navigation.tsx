@@ -75,7 +75,7 @@ const Navigation: React.FC = () => {
                 transition={{ duration: 0.3 }}
               >
                 <img
-                  src="/shelfwise.png"
+                  src="/shelfwise.webp"
                   alt="ShelfWise Logo"
                   className="w-10 h-10 object-contain drop-shadow-sm"
                 />

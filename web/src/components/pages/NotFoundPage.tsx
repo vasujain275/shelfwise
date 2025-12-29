@@ -6,7 +6,7 @@ export default function NotFoundPage() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-800">
       <div className="max-w-md p-8 text-center bg-white rounded-lg shadow-lg">
         <img
-          src="/shelfwise.png"
+          src="/shelfwise.webp"
           alt="ShelfWise Logo"
           className="w-32 h-32 mx-auto mb-6"
         />

@@ -260,7 +260,7 @@ const Sidebar: React.FC = () => {
             transition={{ duration: 0.3 }}
           >
             <img
-              src="/shelfwise.png"
+              src="/shelfwise.webp"
               alt="ShelfWise Logo"
               className="h-12 w-12 object-contain drop-shadow-sm"
             />
