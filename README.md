@@ -458,7 +458,7 @@ shelfwise/
 │   ├── src/
 │   │   ├── main/
 │   │   │   ├── java/
-│   │   │   │   └── in/dipr/library/
+│   │   │   │   └── me/vasujain/shelfwise/
 │   │   │   │       ├── controllers/    # REST Controllers
 │   │   │   │       ├── services/       # Business Logic
 │   │   │   │       ├── repositories/   # Data Access
@@ -468,7 +468,7 @@ shelfwise/
 │   │   │   │       ├── mapper/         # MapStruct Mappers
 │   │   │   │       ├── exceptions/     # Custom Exceptions
 │   │   │   │       ├── response/       # Response Utilities
-│   │   │   │       └── config/         # Configuration Classes
+│   │   │   │       └── configs/        # Configuration Classes
 │   │   │   └── resources/
 │   │   │       └── application.yaml    # Application Config
 │   │   └── test/                       # Unit Tests

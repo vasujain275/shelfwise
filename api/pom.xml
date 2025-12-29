@@ -8,8 +8,8 @@
         <version>3.3.13</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.shelfwise</groupId>
-    <artifactId>library</artifactId>
+    <groupId>me.vasujain</groupId>
+    <artifactId>shelfwise</artifactId>
     <version>1.0.0</version>
     <name>ShelfWise</name>
     <description>ShelfWise Library Management System</description>
