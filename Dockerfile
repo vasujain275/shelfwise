@@ -63,7 +63,7 @@ RUN mkdir -p /app/logs /app/uploads && \
     chown -R shelfwise:shelfwise /app
 
 # Copy the JAR from builder
-COPY --from=backend-builder /app/api/target/library-1.0.0.jar ./library.jar
+COPY --from=backend-builder /app/api/target/shelfwise.jar ./shelfwise.jar
 
 # Switch to non-root user
 USER shelfwise
@@ -84,4 +84,4 @@ ENV JAVA_OPTS="-XX:+UseContainerSupport \
 
 # Run the application
 # Config file should be mounted at runtime via volume or ConfigMap
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar library.jar ${SPRING_OPTS}"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar shelfwise.jar ${SPRING_OPTS}"]

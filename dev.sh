@@ -6,8 +6,8 @@ set -e  # Exit on error
 WEB_DIR="web"
 SPRING_DIR="api"
 RUNTIME_DIR="runtime"
-JAR_NAME="library-1.0.0.jar"
-FINAL_JAR_NAME="library.jar"
+JAR_NAME="shelfwise.jar"
+FINAL_JAR_NAME="shelfwise.jar"
 CONFIG_FILE="$SPRING_DIR/src/main/resources/application.yaml"
 STATIC_DIR="$SPRING_DIR/src/main/resources/static"
 

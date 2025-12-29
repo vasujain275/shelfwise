@@ -1,8 +1,8 @@
 @echo off
-echo Starting Library Spring Boot Application...
+echo Starting ShelfWise Spring Boot Application...
 
 REM Set the JAR and YAML file paths
-set JAR_FILE=runtime\library.jar
+set JAR_FILE=runtime\shelfwise.jar
 set CONFIG_FILE=runtime\application.yaml
 
 :start

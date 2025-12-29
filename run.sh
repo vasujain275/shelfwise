@@ -1,9 +1,9 @@
 #!/bin/bash
 
-echo "Starting Library Spring Boot Application..."
+echo "Starting ShelfWise Spring Boot Application..."
 
 # Set the JAR and YAML file paths
-JAR_FILE="runtime/library.jar"
+JAR_FILE="runtime/shelfwise.jar"
 CONFIG_FILE="runtime/application.yaml"
 
 while true
